@@ -2,7 +2,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { paginate } from '../common/types/paginated-result.type';
 import { PrismaService } from '../prisma/prisma.service';
 import { StorageService } from '../storage/storage.service';
@@ -113,7 +113,7 @@ export class ProjectsService {
       imageUrl = await this.storage.uploadProjectImage(id, file);
     }
 
-    return this.prisma.$transaction(async (tx: Omit<PrismaClient, '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'>) => {
+    return this.prisma.$transaction(async (tx) => {
       if (technologyIds !== undefined) {
         await tx.projectTechnology.deleteMany({ where: { projectId: id } });
         if (technologyIds.length > 0) {
