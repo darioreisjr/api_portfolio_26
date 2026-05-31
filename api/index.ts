@@ -1,0 +1,75 @@
+import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import express from 'express';
+import { IncomingMessage, ServerResponse } from 'http';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const compression = require('compression');
+import helmet from 'helmet';
+import { AppModule } from '../src/app.module';
+import { HttpExceptionFilter } from '../src/common/filters/http-exception.filter';
+import { ResponseTransformInterceptor } from '../src/common/interceptors/response-transform.interceptor';
+
+let cachedApp: express.Express | null = null;
+
+async function createApp(): Promise<express.Express> {
+  if (cachedApp) return cachedApp;
+
+  const expressApp = express();
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp), {
+    logger: ['error', 'warn'],
+  });
+
+  const config = app.get(ConfigService);
+  const apiPrefix = config.get<string>('apiPrefix') ?? 'api/v1';
+  const corsOrigins = config.get<string[]>('cors.origins') ?? [];
+
+  app.setGlobalPrefix(apiPrefix);
+
+  app.use(helmet());
+  app.use(compression());
+
+  app.enableCors({
+    origin: corsOrigins.length > 0 ? corsOrigins : true,
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  );
+
+  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalInterceptors(new ResponseTransformInterceptor());
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Portfolio API')
+    .setDescription('API para gerenciamento do portfólio pessoal')
+    .setVersion('1.0')
+    .addTag('projects', 'Gerenciamento de projetos')
+    .addTag('technologies', 'Gerenciamento de tecnologias')
+    .addTag('categories', 'Gerenciamento de categorias')
+    .addTag('health', 'Status da API')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('docs', app, document, {
+    swaggerOptions: { persistAuthorization: true },
+  });
+
+  await app.init();
+  cachedApp = expressApp;
+  return cachedApp!;
+}
+
+export default async function handler(req: IncomingMessage, res: ServerResponse) {
+  const app = await createApp();
+  app(req, res);
+}
