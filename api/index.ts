@@ -3,8 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import express from 'express';
+import type { Express } from 'express';
 import { IncomingMessage, ServerResponse } from 'http';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const express = require('express') as typeof import('express');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const compression = require('compression');
 import helmet from 'helmet';
@@ -12,9 +14,9 @@ import { AppModule } from '../src/app.module';
 import { HttpExceptionFilter } from '../src/common/filters/http-exception.filter';
 import { ResponseTransformInterceptor } from '../src/common/interceptors/response-transform.interceptor';
 
-let cachedApp: express.Express | null = null;
+let cachedApp: Express | null = null;
 
-async function createApp(): Promise<express.Express> {
+async function createApp(): Promise<Express> {
   if (cachedApp) return cachedApp;
 
   const expressApp = express();
