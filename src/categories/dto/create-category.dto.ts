@@ -7,4 +7,10 @@ export class CreateCategoryDto {
   @IsNotEmpty()
   @MaxLength(100)
   name: string;
+
+  @ApiProperty({ example: 'frontend', maxLength: 120 })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(120)
+  slug: string;
 }

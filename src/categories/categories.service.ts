@@ -12,12 +12,12 @@ export class CategoriesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateCategoryDto) {
-    const existing = await this.prisma.category.findUnique({
-      where: { name: dto.name },
-    });
-    if (existing) {
-      throw new ConflictException(`Categoria "${dto.name}" já existe`);
-    }
+    const [byName, bySlug] = await Promise.all([
+      this.prisma.category.findUnique({ where: { name: dto.name } }),
+      this.prisma.category.findUnique({ where: { slug: dto.slug } }),
+    ]);
+    if (byName) throw new ConflictException(`Categoria "${dto.name}" já existe`);
+    if (bySlug) throw new ConflictException(`Slug "${dto.slug}" já está em uso`);
     return this.prisma.category.create({ data: dto });
   }
 
@@ -35,12 +35,15 @@ export class CategoriesService {
     await this.findOne(id);
 
     if (dto.name) {
-      const existing = await this.prisma.category.findUnique({
-        where: { name: dto.name },
-      });
-      if (existing && existing.id !== id) {
+      const existing = await this.prisma.category.findUnique({ where: { name: dto.name } });
+      if (existing && existing.id !== id)
         throw new ConflictException(`Categoria "${dto.name}" já existe`);
-      }
+    }
+
+    if (dto.slug) {
+      const existing = await this.prisma.category.findUnique({ where: { slug: dto.slug } });
+      if (existing && existing.id !== id)
+        throw new ConflictException(`Slug "${dto.slug}" já está em uso`);
     }
 
     return this.prisma.category.update({ where: { id }, data: dto });
