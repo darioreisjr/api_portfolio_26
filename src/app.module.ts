@@ -8,6 +8,8 @@ import { StorageModule } from './storage/storage.module';
 import { CategoriesModule } from './categories/categories.module';
 import { TechnologiesModule } from './technologies/technologies.module';
 import { ProjectsModule } from './projects/projects.module';
+import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { HealthController } from './health/health.controller';
 
 @Module({
@@ -29,6 +31,7 @@ import { HealthController } from './health/health.controller';
     }),
     PrismaModule,
     StorageModule,
+    AuthModule,
     CategoriesModule,
     TechnologiesModule,
     ProjectsModule,
@@ -38,6 +41,10 @@ import { HealthController } from './health/health.controller';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
     },
   ],
 })

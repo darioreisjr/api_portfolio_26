@@ -44,6 +44,8 @@ async function bootstrap() {
     .setTitle('Portfolio API')
     .setDescription('API para gerenciamento do portfólio pessoal')
     .setVersion('1.0')
+    .addBearerAuth()
+    .addTag('auth', 'Autenticação')
     .addTag('projects', 'Gerenciamento de projetos')
     .addTag('technologies', 'Gerenciamento de tecnologias')
     .addTag('categories', 'Gerenciamento de categorias')

@@ -16,12 +16,14 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiOperation,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+import { Public } from '../auth/decorators/public.decorator';
 import * as multer from 'multer';
 import { ApiPaginatedResponse } from '../common/decorators/api-paginated-response.decorator';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -47,6 +49,7 @@ const multerOptions = {
 };
 
 @ApiTags('projects')
+@ApiBearerAuth()
 @Controller('projects')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
@@ -82,6 +85,7 @@ export class ProjectsController {
   }
 
   @Get()
+  @Public()
   @ApiOperation({ summary: 'Listar projetos (paginado, filtrável)' })
   @ApiPaginatedResponse(CreateProjectDto)
   findAll(@Query() query: ProjectQueryDto) {
@@ -89,6 +93,7 @@ export class ProjectsController {
   }
 
   @Get('featured')
+  @Public()
   @ApiOperation({ summary: 'Listar projetos em destaque' })
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 6 })
   findFeatured(
@@ -98,6 +103,7 @@ export class ProjectsController {
   }
 
   @Get(':id')
+  @Public()
   @ApiOperation({ summary: 'Buscar projeto por ID' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.projectsService.findOne(id);

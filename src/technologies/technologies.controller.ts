@@ -10,12 +10,14 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Public } from '../auth/decorators/public.decorator';
 import { CreateTechnologyDto } from './dto/create-technology.dto';
 import { UpdateTechnologyDto } from './dto/update-technology.dto';
 import { TechnologiesService } from './technologies.service';
 
 @ApiTags('technologies')
+@ApiBearerAuth()
 @Controller('technologies')
 export class TechnologiesController {
   constructor(private readonly technologiesService: TechnologiesService) {}
@@ -27,12 +29,14 @@ export class TechnologiesController {
   }
 
   @Get()
+  @Public()
   @ApiOperation({ summary: 'Listar todas as tecnologias' })
   findAll() {
     return this.technologiesService.findAll();
   }
 
   @Get(':id')
+  @Public()
   @ApiOperation({ summary: 'Buscar tecnologia por ID' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.technologiesService.findOne(id);

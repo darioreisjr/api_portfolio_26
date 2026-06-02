@@ -6,6 +6,7 @@ export default () => ({
     url: process.env.SUPABASE_URL ?? '',
     serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? '',
     storageBucket: process.env.SUPABASE_STORAGE_BUCKET ?? 'portfolio-images',
+    jwtSecret: process.env.SUPABASE_JWT_SECRET ?? '',
   },
   storage: {
     maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES ?? '5242880', 10),
