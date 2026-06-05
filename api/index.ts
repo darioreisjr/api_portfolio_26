@@ -75,6 +75,12 @@ async function createApp(): Promise<Express> {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  const app = await createApp();
-  app(req, res);
+  try {
+    const app = await createApp();
+    app(req, res);
+  } catch (err) {
+    console.error('[handler] Falha ao inicializar aplicação:', err);
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Falha ao inicializar servidor', detail: String(err) }));
+  }
 }
