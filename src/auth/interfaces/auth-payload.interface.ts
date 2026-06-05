@@ -1,7 +1,7 @@
 export interface IAuthPayload {
   sub: string;
-  email: string;
-  role: string;
-  iat: number;
-  exp: number;
+  email?: string;
+  role?: string;
+  iat?: number;
+  exp?: number;
 }
