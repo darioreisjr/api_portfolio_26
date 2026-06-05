@@ -35,6 +35,7 @@ export class AuthService implements OnModuleInit {
 
     return {
       accessToken: data.session.access_token,
+      token: data.session.access_token,
       tokenType: 'Bearer',
       expiresIn: data.session.expires_in,
     };
