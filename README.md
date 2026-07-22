@@ -1,98 +1,196 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 📁 API Portfolio 26
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+![NestJS](https://img.shields.io/badge/NestJS-11-E0234E?logo=nestjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?logo=prisma&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-4169E1?logo=postgresql&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white)
+![License](https://img.shields.io/badge/license-UNLICENSED-lightgrey)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+API RESTful desenvolvida com **NestJS** para gerenciar o conteúdo de um portfólio pessoal (projetos, tecnologias e categorias), com autenticação via Supabase Auth e upload de imagens via Supabase Storage.
 
-## Description
+🔗 **Deploy:** https://api-portfolio-26.vercel.app
+📚 **Documentação (Swagger):** `/docs`
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## ✨ Funcionalidades
 
-## Project setup
+- Autenticação via JWT (Supabase Auth)
+- CRUD de projetos, com upload de imagem (JPEG, PNG, WebP)
+- Paginação, filtros (categoria, destaque, busca por texto) e ordenação na listagem de projetos
+- CRUD de categorias e tecnologias
+- Endpoint de projetos em destaque
+- Rate limiting (Throttler)
+- Documentação interativa via Swagger
+- Health check
+- Segurança com Helmet, CORS configurável e compressão de respostas
 
-```bash
-$ npm install
+## 🛠️ Tecnologias
+
+- [NestJS](https://nestjs.com/) 11
+- [TypeScript](https://www.typescriptlang.org/)
+- [Prisma ORM](https://www.prisma.io/) 7 (`@prisma/adapter-pg`)
+- [PostgreSQL](https://www.postgresql.org/) (via Supabase)
+- [Supabase](https://supabase.com/) (Auth + Storage)
+- [Passport JWT](https://www.passportjs.org/)
+- [Swagger / OpenAPI](https://swagger.io/)
+- [class-validator](https://github.com/typestack/class-validator) / [class-transformer](https://github.com/typestack/class-transformer)
+- [Multer](https://github.com/expressjs/multer) (upload de arquivos)
+- [Helmet](https://helmetjs.github.io/), [Compression](https://github.com/expressjs/compression), [Throttler](https://docs.nestjs.com/security/rate-limiting)
+- [Jest](https://jestjs.io/) (testes)
+- Deploy serverless na [Vercel](https://vercel.com/)
+
+## 📂 Estrutura do projeto
+
+```
+src/
+├── auth/            # Login, guards, decorators e estratégia JWT
+├── categories/       # CRUD de categorias
+├── technologies/      # CRUD de tecnologias
+├── projects/         # CRUD de projetos + upload de imagem + filtros
+├── storage/          # Integração com Supabase Storage
+├── health/           # Health check
+├── common/           # DTOs, filtros e interceptors compartilhados
+├── config/           # Configurações de ambiente
+├── prisma/           # PrismaService/PrismaModule
+├── app.module.ts
+└── main.ts
+prisma/
+├── schema.prisma
+└── migrations/
+api/
+└── index.ts          # Handler serverless para Vercel
 ```
 
-## Compile and run the project
+## 🗃️ Modelo de dados
+
+- **Category**: `id`, `name`, `slug`, `createdAt`
+- **Technology**: `id`, `name`, `iconUrl`, `createdAt`
+- **Project**: `id`, `title`, `description`, `imageUrl`, `projectUrl`, `repositoryUrl`, `isFeatured`, `categoryId`, `createdAt`, `updatedAt`
+- **ProjectTechnology**: tabela de junção N:N entre `Project` e `Technology`
+
+## ✅ Pré-requisitos
+
+- Node.js 18+
+- Conta e projeto no [Supabase](https://supabase.com/) (PostgreSQL + Auth + Storage)
+- npm
+
+## ⚙️ Configuração
+
+1. Clone o repositório e instale as dependências:
+
+   ```bash
+   git clone https://github.com/darioreisjr/api_portfolio_26.git
+   cd api_portfolio_26
+   npm install
+   ```
+
+2. Copie o arquivo de variáveis de ambiente e preencha com seus dados:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   | Variável | Descrição |
+   |---|---|
+   | `NODE_ENV` | Ambiente de execução (`development`/`production`) |
+   | `PORT` | Porta da aplicação |
+   | `API_PREFIX` | Prefixo global das rotas (ex: `api/v1`) |
+   | `DATABASE_URL` | Connection string do PostgreSQL (pooler, porta 6543) |
+   | `DIRECT_URL` | Connection string direta (porta 5432), usada nas migrations |
+   | `SUPABASE_URL` | URL do projeto Supabase |
+   | `SUPABASE_SERVICE_ROLE_KEY` | Service role key do Supabase |
+   | `SUPABASE_JWT_SECRET` | Secret usado para validar os JWTs do Supabase Auth |
+   | `SUPABASE_STORAGE_BUCKET` | Nome do bucket usado para armazenar imagens |
+   | `MAX_FILE_SIZE_BYTES` | Tamanho máximo de upload de imagem |
+   | `CORS_ORIGINS` | Origens permitidas, separadas por vírgula |
+   | `THROTTLE_TTL` / `THROTTLE_LIMIT` | Configuração de rate limiting |
+
+3. Rode as migrations do Prisma:
+
+   ```bash
+   npm run prisma:migrate:dev
+   ```
+
+## ▶️ Executando o projeto
 
 ```bash
-# development
-$ npm run start
+# desenvolvimento (watch mode)
+npm run start:dev
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# produção
+npm run build
+npm run start:prod
 ```
 
-## Run tests
+A API ficará disponível em `http://localhost:3000/api/v1` e a documentação Swagger em `http://localhost:3000/docs`.
+
+## 🧪 Testes
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run test        # testes unitários
+npm run test:e2e     # testes end-to-end
+npm run test:cov     # cobertura de testes
 ```
 
-## Deployment
+## 📖 Documentação da API
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+A documentação completa e interativa (Swagger) está disponível em `/docs` assim que o servidor está rodando, incluindo suporte a autenticação Bearer.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Principais endpoints
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+| Método | Rota | Acesso | Descrição |
+|---|---|---|---|
+| POST | `/auth/login` | Público | Login com email/senha (Supabase Auth) |
+| GET | `/health` | Público | Status da API |
+| GET | `/categories` | Público | Lista categorias |
+| GET | `/categories/:id` | Público | Busca categoria por ID |
+| POST | `/categories` | Autenticado | Cria categoria |
+| PATCH | `/categories/:id` | Autenticado | Atualiza categoria |
+| DELETE | `/categories/:id` | Autenticado | Remove categoria |
+| GET | `/technologies` | Público | Lista tecnologias |
+| GET | `/technologies/:id` | Público | Busca tecnologia por ID |
+| POST | `/technologies` | Autenticado | Cria tecnologia |
+| PATCH | `/technologies/:id` | Autenticado | Atualiza tecnologia |
+| DELETE | `/technologies/:id` | Autenticado | Remove tecnologia |
+| GET | `/projects` | Público | Lista projetos (paginado, filtros: `categoryId`, `isFeatured`, `search`, `page`, `limit`, `sortBy`, `order`) |
+| GET | `/projects/featured` | Público | Lista projetos em destaque |
+| GET | `/projects/:id` | Público | Busca projeto por ID |
+| POST | `/projects` | Autenticado | Cria projeto (multipart, imagem opcional) |
+| PATCH | `/projects/:id` | Autenticado | Atualiza projeto |
+| DELETE | `/projects/:id` | Autenticado | Remove projeto |
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+> Rotas marcadas como "Autenticado" exigem um token JWT válido (`Authorization: Bearer <token>`), obtido via `/auth/login`.
 
-## Resources
+## 🔒 Segurança
 
-Check out a few resources that may come in handy when working with NestJS:
+- Guard JWT global (`JwtAuthGuard`), com rotas públicas marcadas explicitamente via decorator `@Public()`
+- Rate limiting global via `ThrottlerGuard`
+- Cabeçalhos de segurança com `helmet`
+- CORS configurável por variável de ambiente
+- Validação e sanitização de payloads com `class-validator` (`whitelist`, `forbidNonWhitelisted`)
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## 🚀 Deploy
 
-## Support
+O projeto está configurado para deploy serverless na Vercel (`vercel.json` + `api/index.ts`). O script `vercel-build` executa `prisma generate` automaticamente durante o build.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 📝 Scripts disponíveis
 
-## Stay in touch
+| Script | Descrição |
+|---|---|
+| `npm run start:dev` | Inicia em modo desenvolvimento (watch) |
+| `npm run start:prod` | Inicia em modo produção |
+| `npm run build` | Gera o client do Prisma e compila o projeto |
+| `npm run lint` | Executa o ESLint |
+| `npm run format` | Formata o código com Prettier |
+| `npm run prisma:migrate:dev` | Roda migrations em desenvolvimento |
+| `npm run prisma:migrate:deploy` | Aplica migrations em produção |
+| `npm run prisma:studio` | Abre o Prisma Studio |
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 👨‍💻 Autor
 
-## License
+**Dario Reis**
+GitHub: [@darioreisjr](https://github.com/darioreisjr)
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 📄 Licença
+
+Este projeto está sob a licença UNLICENSED (uso privado/pessoal).
